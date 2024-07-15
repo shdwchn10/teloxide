@@ -169,6 +169,9 @@ macro_rules! fwd_erased {
     (@convert $m:ident, $arg:ident, emoji_list: $T:ty) => {
         $arg.into_iter().collect()
     };
+    (@convert $m:ident, $arg:ident, message_ids: $T:ty) => {
+        $arg.into_iter().collect()
+    };
     (@convert $m:ident, $arg:ident, $arg_:ident : $T:ty) => {
         $arg.into()
     };
@@ -189,7 +192,9 @@ where
         delete_webhook,
         get_webhook_info,
         forward_message,
+        forward_messages,
         copy_message,
+        copy_messages,
         send_message,
         send_photo,
         send_audio,
@@ -278,6 +283,7 @@ where
         edit_message_reply_markup_inline,
         stop_poll,
         delete_message,
+        delete_messages,
         send_sticker,
         get_sticker_set,
         get_custom_emoji_stickers,
@@ -340,12 +346,26 @@ trait ErasableRequester<'a> {
         message_id: MessageId,
     ) -> ErasedRequest<'a, ForwardMessage, Self::Err>;
 
+    fn forward_messages(
+        &self,
+        chat_id: Recipient,
+        from_chat_id: Recipient,
+        message_ids: Vec<MessageId>,
+    ) -> ErasedRequest<'a, ForwardMessages, Self::Err>;
+
     fn copy_message(
         &self,
         chat_id: Recipient,
         from_chat_id: Recipient,
         message_id: MessageId,
     ) -> ErasedRequest<'a, CopyMessage, Self::Err>;
+
+    fn copy_messages(
+        &self,
+        chat_id: Recipient,
+        from_chat_id: Recipient,
+        message_ids: Vec<MessageId>,
+    ) -> ErasedRequest<'a, CopyMessages, Self::Err>;
 
     fn send_photo(
         &self,
@@ -815,6 +835,12 @@ trait ErasableRequester<'a> {
         message_id: MessageId,
     ) -> ErasedRequest<'a, DeleteMessage, Self::Err>;
 
+    fn delete_messages(
+        &self,
+        chat_id: Recipient,
+        message_ids: Vec<MessageId>,
+    ) -> ErasedRequest<'a, DeleteMessages, Self::Err>;
+
     fn send_sticker(
         &self,
         chat_id: Recipient,
@@ -1018,6 +1044,15 @@ where
         Requester::forward_message(self, chat_id, from_chat_id, message_id).erase()
     }
 
+    fn forward_messages(
+        &self,
+        chat_id: Recipient,
+        from_chat_id: Recipient,
+        message_ids: Vec<MessageId>,
+    ) -> ErasedRequest<'a, ForwardMessages, Self::Err> {
+        Requester::forward_messages(self, chat_id, from_chat_id, message_ids).erase()
+    }
+
     fn copy_message(
         &self,
         chat_id: Recipient,
@@ -1025,6 +1060,15 @@ where
         message_id: MessageId,
     ) -> ErasedRequest<'a, CopyMessage, Self::Err> {
         Requester::copy_message(self, chat_id, from_chat_id, message_id).erase()
+    }
+
+    fn copy_messages(
+        &self,
+        chat_id: Recipient,
+        from_chat_id: Recipient,
+        message_ids: Vec<MessageId>,
+    ) -> ErasedRequest<'a, CopyMessages, Self::Err> {
+        Requester::copy_messages(self, chat_id, from_chat_id, message_ids).erase()
     }
 
     fn send_photo(
@@ -1673,6 +1717,14 @@ where
         message_id: MessageId,
     ) -> ErasedRequest<'a, DeleteMessage, Self::Err> {
         Requester::delete_message(self, chat_id, message_id).erase()
+    }
+
+    fn delete_messages(
+        &self,
+        chat_id: Recipient,
+        message_ids: Vec<MessageId>,
+    ) -> ErasedRequest<'a, DeleteMessages, Self::Err> {
+        Requester::delete_messages(self, chat_id, message_ids).erase()
     }
 
     fn send_sticker(
