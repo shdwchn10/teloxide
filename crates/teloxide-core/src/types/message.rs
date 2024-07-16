@@ -7,12 +7,12 @@ use url::Url;
 use crate::types::{
     Animation, Audio, BareChatId, Chat, ChatId, ChatShared, Contact, Dice, Document,
     ForumTopicClosed, ForumTopicCreated, ForumTopicEdited, ForumTopicReopened, Game,
-    GeneralForumTopicHidden, GeneralForumTopicUnhidden, Giveaway, GiveawayCreated, GiveawayWinners,
-    InlineKeyboardMarkup, Invoice, Location, MessageAutoDeleteTimerChanged, MessageEntity,
-    MessageEntityRef, MessageId, PassportData, PhotoSize, Poll, ProximityAlertTriggered, Sticker,
-    Story, SuccessfulPayment, ThreadId, True, User, UserShared, Venue, Video, VideoChatEnded,
-    VideoChatParticipantsInvited, VideoChatScheduled, VideoChatStarted, VideoNote, Voice,
-    WebAppData, WriteAccessAllowed,
+    GeneralForumTopicHidden, GeneralForumTopicUnhidden, Giveaway, GiveawayCompleted,
+    GiveawayCreated, GiveawayWinners, InlineKeyboardMarkup, Invoice, Location,
+    MessageAutoDeleteTimerChanged, MessageEntity, MessageEntityRef, MessageId, PassportData,
+    PhotoSize, Poll, ProximityAlertTriggered, Sticker, Story, SuccessfulPayment, ThreadId, True,
+    User, UserShared, Venue, Video, VideoChatEnded, VideoChatParticipantsInvited,
+    VideoChatScheduled, VideoChatStarted, VideoNote, Voice, WebAppData, WriteAccessAllowed,
 };
 
 /// This object represents a message.
@@ -77,6 +77,7 @@ pub enum MessageKind {
     GeneralForumTopicHidden(MessageGeneralForumTopicHidden),
     GeneralForumTopicUnhidden(MessageGeneralForumTopicUnhidden),
     Giveaway(MessageGiveaway),
+    GiveawayCompleted(MessageGiveawayCompleted),
     GiveawayCreated(MessageGiveawayCreated),
     GiveawayWinners(MessageGiveawayWinners),
     VideoChatScheduled(MessageVideoChatScheduled),
@@ -646,6 +647,16 @@ pub struct MessageGiveaway {
     ///
     /// [More about giveaways »]: https://core.telegram.org/api#giveaways-amp-gifts
     pub giveaway: Giveaway,
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct MessageGiveawayCompleted {
+    /// Service message: a 'Giveaway' completed. [More about giveaways
+    /// »]
+    ///
+    /// [More about giveaways »]: https://core.telegram.org/api#giveaways-amp-gifts
+    pub giveaway_completed: GiveawayCompleted,
 }
 
 #[serde_with::skip_serializing_none]
