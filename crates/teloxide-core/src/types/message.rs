@@ -7,10 +7,10 @@ use url::Url;
 use crate::types::{
     Animation, Audio, BareChatId, Chat, ChatId, ChatShared, Contact, Dice, Document,
     ForumTopicClosed, ForumTopicCreated, ForumTopicEdited, ForumTopicReopened, Game,
-    GeneralForumTopicHidden, GeneralForumTopicUnhidden, InlineKeyboardMarkup, Invoice, Location,
-    MessageAutoDeleteTimerChanged, MessageEntity, MessageEntityRef, MessageId, PassportData,
-    PhotoSize, Poll, ProximityAlertTriggered, Sticker, Story, SuccessfulPayment, ThreadId, True,
-    User, UserShared, Venue, Video, VideoChatEnded, VideoChatParticipantsInvited,
+    GeneralForumTopicHidden, GeneralForumTopicUnhidden, Giveaway, InlineKeyboardMarkup, Invoice,
+    Location, MessageAutoDeleteTimerChanged, MessageEntity, MessageEntityRef, MessageId,
+    PassportData, PhotoSize, Poll, ProximityAlertTriggered, Sticker, Story, SuccessfulPayment,
+    ThreadId, True, User, UserShared, Venue, Video, VideoChatEnded, VideoChatParticipantsInvited,
     VideoChatScheduled, VideoChatStarted, VideoNote, Voice, WebAppData, WriteAccessAllowed,
 };
 
@@ -75,6 +75,7 @@ pub enum MessageKind {
     ForumTopicReopened(MessageForumTopicReopened),
     GeneralForumTopicHidden(MessageGeneralForumTopicHidden),
     GeneralForumTopicUnhidden(MessageGeneralForumTopicUnhidden),
+    Giveaway(MessageGiveaway),
     VideoChatScheduled(MessageVideoChatScheduled),
     VideoChatStarted(MessageVideoChatStarted),
     VideoChatEnded(MessageVideoChatEnded),
@@ -632,6 +633,16 @@ pub struct MessageGeneralForumTopicHidden {
 pub struct MessageGeneralForumTopicUnhidden {
     /// Service message: the 'General' forum topic unhidden.
     pub general_forum_topic_unhidden: GeneralForumTopicUnhidden,
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct MessageGiveaway {
+    /// Message is giveaway, information about a scheduled giveaway. [More about
+    /// giveaways »]
+    ///
+    /// [More about giveaways »]: https://core.telegram.org/api#giveaways-amp-gifts
+    pub giveaway: Giveaway,
 }
 
 #[serde_with::skip_serializing_none]
