@@ -1865,6 +1865,7 @@ mod tests {
                         has_restricted_voice_and_video_messages: None
                     }),
                     photo: None,
+                    available_reactions: None,
                     has_aggressive_anti_spam_enabled: false,
                     pinned_message: None,
                     message_auto_delete_time: None,
@@ -2099,6 +2100,7 @@ mod tests {
             }),
             message_auto_delete_time: None,
             photo: None,
+            available_reactions: None,
             pinned_message: None,
             has_hidden_members: false,
             has_aggressive_anti_spam_enabled: false,
@@ -2389,6 +2391,7 @@ mod tests {
                         has_protected_content: None
                     }),
                     photo: None,
+                    available_reactions: None,
                     pinned_message: None,
                     message_auto_delete_time: None,
                     has_hidden_members: false,
@@ -2497,6 +2500,7 @@ mod tests {
                             has_protected_content: None
                         }),
                         photo: None,
+                        available_reactions: None,
                         pinned_message: None,
                         message_auto_delete_time: None,
                         has_hidden_members: false,
@@ -2519,6 +2523,7 @@ mod tests {
                                     has_protected_content: None
                                 }),
                                 photo: None,
+                                available_reactions: None,
                                 pinned_message: None,
                                 message_auto_delete_time: None,
                                 has_hidden_members: false,
@@ -2619,6 +2624,7 @@ mod tests {
                         has_protected_content: None
                     }),
                     photo: None,
+                    available_reactions: None,
                     pinned_message: None,
                     message_auto_delete_time: None,
                     has_hidden_members: false,

@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::types::{
-    ChatFullInfo, ChatId, ChatLocation, ChatPermissions, ChatPhoto, Message, Seconds, True, User,
+    ChatFullInfo, ChatId, ChatLocation, ChatPermissions, ChatPhoto, Message, ReactionType, Seconds,
+    True, User,
 };
 
 /// This object represents a chat.
@@ -20,6 +21,12 @@ pub struct Chat {
     ///
     /// [`GetChat`]: crate::payloads::GetChat
     pub photo: Option<ChatPhoto>,
+
+    /// List of available reactions allowed in the chat. If omitted, then all
+    /// emoji reactions are allowed. Returned only from [`GetChat`].
+    ///
+    /// [`GetChat`]: crate::payloads::GetChat
+    pub available_reactions: Option<Vec<ReactionType>>,
 
     /// The most recent pinned message (by sending date). Returned only in
     /// [`GetChat`].
@@ -614,13 +621,29 @@ mod tests {
                 has_protected_content: None,
             }),
             photo: None,
+            available_reactions: Some(vec![ReactionType {
+                kind: ReactionTypeKind::Emoji { emoji: "🌭".to_owned() },
+            }]),
             pinned_message: None,
             message_auto_delete_time: None,
             has_hidden_members: false,
             has_aggressive_anti_spam_enabled: false,
             chat_full_info: ChatFullInfo { emoji_status_expiration_date: None },
         };
-        let actual = from_str(r#"{"id":-1,"type":"channel","username":"channel_name"}"#).unwrap();
+        let actual = from_str(
+            r#"{
+                "id": -1,
+                "type": "channel",
+                "username": "channel_name",
+                "available_reactions": [
+                    {
+                        "type": "emoji",
+                        "emoji": "🌭"
+                    }
+                ]
+            }"#,
+        )
+        .unwrap();
         assert_eq!(expected, actual);
     }
 
@@ -639,14 +662,30 @@ mod tests {
                     emoji_status_custom_emoji_id: None
                 }),
                 photo: None,
+                available_reactions: Some(vec![ReactionType {
+                    kind: ReactionTypeKind::Emoji { emoji: "🌭".to_owned() },
+                }]),
                 pinned_message: None,
                 message_auto_delete_time: None,
                 has_hidden_members: false,
                 has_aggressive_anti_spam_enabled: false,
                 chat_full_info: ChatFullInfo { emoji_status_expiration_date: None }
             },
-            from_str(r#"{"id":0,"type":"private","username":"username","first_name":"Anon"}"#)
-                .unwrap()
+            from_str(
+                r#"{
+                    "id": 0,
+                    "type": "private",
+                    "username": "username",
+                    "first_name": "Anon",
+                    "available_reactions": [
+                        {
+                            "type": "emoji",
+                            "emoji": "🌭"
+                        }
+                    ]
+                }"#
+            )
+            .unwrap()
         );
     }
 
@@ -664,6 +703,7 @@ mod tests {
                 emoji_status_custom_emoji_id: None,
             }),
             photo: None,
+            available_reactions: None,
             pinned_message: None,
             message_auto_delete_time: None,
             has_hidden_members: false,
