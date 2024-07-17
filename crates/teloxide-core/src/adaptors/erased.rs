@@ -209,6 +209,7 @@ where
         send_poll,
         send_dice,
         send_chat_action,
+        set_message_reaction,
         get_user_profile_photos,
         get_file,
         kick_chat_member,
@@ -458,6 +459,12 @@ trait ErasableRequester<'a> {
         chat_id: Recipient,
         action: ChatAction,
     ) -> ErasedRequest<'a, SendChatAction, Self::Err>;
+
+    fn set_message_reaction(
+        &self,
+        chat_id: Recipient,
+        message_id: MessageId,
+    ) -> ErasedRequest<'a, SetMessageReaction, Self::Err>;
 
     fn get_user_profile_photos(
         &self,
@@ -1175,6 +1182,14 @@ where
         action: ChatAction,
     ) -> ErasedRequest<'a, SendChatAction, Self::Err> {
         Requester::send_chat_action(self, chat_id, action).erase()
+    }
+
+    fn set_message_reaction(
+        &self,
+        chat_id: Recipient,
+        message_id: MessageId,
+    ) -> ErasedRequest<'a, SetMessageReaction, Self::Err> {
+        Requester::set_message_reaction(self, chat_id, message_id).erase()
     }
 
     fn get_user_profile_photos(
