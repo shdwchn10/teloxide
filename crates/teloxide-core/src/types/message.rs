@@ -724,9 +724,9 @@ mod getters {
 
     use crate::types::{
         self, message::MessageKind::*, Chat, ChatId, ChatMigration, Forward, ForwardedFrom,
-        MediaAnimation, MediaAudio, MediaContact, MediaDocument, MediaGame, MediaKind,
-        MediaLocation, MediaPhoto, MediaPoll, MediaSticker, MediaStory, MediaText, MediaVenue,
-        MediaVideo, MediaVideoNote, MediaVoice, Message, MessageChannelChatCreated,
+        LinkPreviewOptions, MediaAnimation, MediaAudio, MediaContact, MediaDocument, MediaGame,
+        MediaKind, MediaLocation, MediaPhoto, MediaPoll, MediaSticker, MediaStory, MediaText,
+        MediaVenue, MediaVideo, MediaVideoNote, MediaVoice, Message, MessageChannelChatCreated,
         MessageChatShared, MessageCommon, MessageConnectedWebsite, MessageDeleteChatPhoto,
         MessageDice, MessageEntity, MessageGroupChatCreated, MessageId, MessageInvoice,
         MessageLeftChatMember, MessageNewChatMembers, MessageNewChatPhoto, MessageNewChatTitle,
@@ -889,6 +889,17 @@ mod getters {
                     media_kind: MediaKind::Text(MediaText { entities, .. }),
                     ..
                 }) => Some(entities),
+                _ => None,
+            }
+        }
+
+        #[must_use]
+        pub fn link_preview_options(&self) -> Option<&LinkPreviewOptions> {
+            match &self.kind {
+                Common(MessageCommon {
+                    media_kind: MediaKind::Text(MediaText { link_preview_options, .. }),
+                    ..
+                }) => link_preview_options.as_ref(),
                 _ => None,
             }
         }
