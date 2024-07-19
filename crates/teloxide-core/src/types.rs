@@ -13,6 +13,8 @@ pub use callback_query::*;
 pub use chat::*;
 pub use chat_action::*;
 pub use chat_administrator_rights::*;
+pub use chat_boost::*;
+pub use chat_boost_source::*;
 pub use chat_full_info::*;
 pub use chat_invite_link::*;
 pub use chat_join_request::*;
@@ -151,6 +153,8 @@ mod callback_query;
 mod chat;
 mod chat_action;
 mod chat_administrator_rights;
+mod chat_boost;
+mod chat_boost_source;
 mod chat_full_info;
 mod chat_invite_link;
 mod chat_join_request;
@@ -300,6 +304,7 @@ use serde::Serialize;
 use serde_with::with_prefix;
 
 // Deserialization prefix for giveaway_message_id field used in GiveawayWinners
+// and ChatBoostSourceGiveaway
 with_prefix!(prefix_giveaway_message_id "giveaway_");
 
 /// Converts an `i64` timestamp to a `choro::DateTime`, producing serde error
