@@ -297,6 +297,10 @@ pub use seconds::*;
 pub use user_id::*;
 
 use serde::Serialize;
+use serde_with::with_prefix;
+
+// Deserialization prefix for giveaway_message_id field used in GiveawayWinners
+with_prefix!(prefix_giveaway_message_id "giveaway_");
 
 /// Converts an `i64` timestamp to a `choro::DateTime`, producing serde error
 /// for invalid timestamps
