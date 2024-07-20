@@ -2113,6 +2113,7 @@ mod tests {
                     username: None,
                     sticker_set_name: None,
                     can_set_sticker_set: None,
+                    custom_emoji_sticker_set_name: None,
                     permissions: None,
                     slow_mode_delay: None,
                     unrestrict_boost_count: None,
