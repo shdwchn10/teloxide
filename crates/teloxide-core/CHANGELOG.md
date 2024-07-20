@@ -115,6 +115,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Add `giveaway`, `giveaway_created`, `giveaway_winners` and `giveaway_completed` getters to `Message` 
   - Other Changes
     - Add fields `ChafFullInfo::{has_visible_history, accent_color_id, background_custom_emoji_id, profile_accent_color_id, profile_background_custom_emoji_id}`
+- Support for TBA 7.1
+  - Updated docs for `can_post_stories`, `can_edit_stories` and `can_delete_stories` admin privileges
+  - Add `ChatBoostAdded` and `StoryId` structs
+  - Add `ChatBoostAdded` variant to `MessageKind` enum
+  - Add `sender_boost_count` field to `Message` struct
+  - Add `reply_to_story` field to `MessageCommon` struct
+  - Add `chat` and `id` fields to `Story` struct
+  - Add `unrestrict_boost_count` and `custom_emoji_sticker_set_name` fields to `PublicChatSupergroup` struct
+  - Add `boost_added` and `reply_to_story` getters to `Message` struct
+  - Add `unrestrict_boost_count` and `custom_emoji_sticker_set_name` getters to `Chat` struct
 
 [pr851]: https://github.com/teloxide/teloxide/pull/851
 [pr887]: https://github.com/teloxide/teloxide/pull/887

@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `MessageExt::filter_story` method for the corresponding `MediaKind::Story` variant ([PR 1087](https://github.com/teloxide/teloxide/pull/1087)).
 - Add `filter_giveaway`, `filter_giveaway_completed`, `filter_giveaway_created` and `filter_giveaway_winners` filters to `MessageFilterExt` trait ([PR 1101](https://github.com/teloxide/teloxide/pull/1101)).
 - Use [deadpool-redis](https://crates.io/crates/deadpool-redis) for Redis connection pooling ([PR 1081](https://github.com/teloxide/teloxide/pull/1081)).
+- Add `filter_boost_added` and `filter_reply_to_story` filters to `MessageFilterExt` trait
 
 ### Fixed
 
