@@ -523,6 +523,7 @@ mod test {
                     added_to_attachment_menu: false,
                 }),
                 sender_chat: None,
+                sender_boost_count: None,
                 is_topic_message: false,
                 date,
                 chat: Chat {

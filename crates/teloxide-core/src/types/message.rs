@@ -40,6 +40,11 @@ pub struct Message {
     /// forwarded to the discussion group
     pub sender_chat: Option<Chat>,
 
+    /// If the sender of the message boosted the chat, the number of boosts
+    /// added by the user
+    // Yes, it's i32 ¯\_(ツ)_/¯: https://github.com/tdlib/td/blob/cb164927417f22811c74cd8678ed4a5ab7cb80ba/td/telegram/MessagesManager.h#L1004
+    pub sender_boost_count: Option<i32>,
+
     /// Date the message was sent in Unix time.
     #[serde(with = "crate::types::serde_date_from_unix_timestamp")]
     pub date: DateTime<Utc>,
@@ -1860,6 +1865,7 @@ mod tests {
                 thread_id: None,
                 from: None,
                 sender_chat: None,
+                sender_boost_count: None,
                 date: chrono::DateTime::from_timestamp(1567927221, 0).unwrap(),
                 is_topic_message: false,
                 chat: Chat {
@@ -2520,6 +2526,7 @@ mod tests {
                         message_auto_delete_time: None,
                         pinned_message: None
                     }),
+                    sender_boost_count: None,
                     is_topic_message: false,
                     date: DateTime::from_timestamp(1721161230, 0).unwrap(),
                     chat: Chat {
