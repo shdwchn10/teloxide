@@ -549,6 +549,7 @@ mod test {
                     forward_origin: None,
                     external_reply: None,
                     quote: None,
+                    reply_to_story: None,
                     edit_date: None,
                     media_kind: MediaKind::Text(MediaText {
                         text: String::from("hello there"),

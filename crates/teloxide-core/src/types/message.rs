@@ -133,6 +133,9 @@ pub struct MessageCommon {
     /// the message
     pub quote: Option<TextQuote>,
 
+    /// For replies to a story, the original story
+    pub reply_to_story: Option<Story>,
+
     /// Date the message was last edited in Unix time.
     #[serde(default, with = "crate::types::serde_opt_date_from_unix_timestamp")]
     pub edit_date: Option<DateTime<Utc>>,
@@ -705,7 +708,7 @@ mod getters {
         MessageInvoice, MessageLeftChatMember, MessageNewChatMembers, MessageNewChatPhoto,
         MessageNewChatTitle, MessageOrigin, MessagePassportData, MessagePinned,
         MessageProximityAlertTriggered, MessageSuccessfulPayment, MessageSupergroupChatCreated,
-        MessageUsersShared, MessageVideoChatParticipantsInvited, PhotoSize, TextQuote, User,
+        MessageUsersShared, MessageVideoChatParticipantsInvited, PhotoSize, Story, TextQuote, User,
     };
 
     use super::{
@@ -755,6 +758,14 @@ mod getters {
         pub fn quote(&self) -> Option<&TextQuote> {
             match &self.kind {
                 Common(MessageCommon { quote, .. }) => quote.as_ref(),
+                _ => None,
+            }
+        }
+
+        #[must_use]
+        pub fn reply_to_story(&self) -> Option<&Story> {
+            match &self.kind {
+                Common(MessageCommon { reply_to_story, .. }) => reply_to_story.as_ref(),
                 _ => None,
             }
         }
