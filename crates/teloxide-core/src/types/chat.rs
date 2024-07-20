@@ -209,6 +209,14 @@ pub struct PublicChatSupergroup {
     /// [`GetChat`]: crate::payloads::GetChat
     pub slow_mode_delay: Option<Seconds>,
 
+    /// For supergroups, the minimum number of boosts that a non-administrator
+    /// user needs to add in order to ignore slow mode and chat permissions.
+    /// Returned only from [`GetChat`].
+    ///
+    /// [`GetChat`]: crate::payloads::GetChat
+    // Yes, it's i32 ¯\_(ツ)_/¯: https://github.com/tdlib/td/blob/cb164927417f22811c74cd8678ed4a5ab7cb80ba/td/telegram/ChatManager.h#L553
+    pub unrestrict_boost_count: Option<i32>,
+
     /// Unique identifier for the linked chat, i.e. the discussion group
     /// identifier for a channel and vice versa. Returned only in [`GetChat`].
     ///
@@ -364,6 +372,21 @@ impl Chat {
         if let ChatKind::Public(this) = &self.kind {
             if let PublicChatKind::Supergroup(this) = &this.kind {
                 return this.slow_mode_delay;
+            }
+        }
+
+        None
+    }
+
+    /// Unique identifier for the linked chat, i.e. the discussion group
+    /// identifier for a channel and vice versa. Returned only in [`GetChat`].
+    ///
+    /// [`GetChat`]: crate::payloads::GetChat
+    #[must_use]
+    pub fn unrestrict_boost_count(&self) -> Option<i32> {
+        if let ChatKind::Public(this) = &self.kind {
+            if let PublicChatKind::Supergroup(this) = &this.kind {
+                return this.unrestrict_boost_count;
             }
         }
 
