@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::OrderInfo;
+use crate::types::{OrderInfo, TelegramPaymentChargeId};
 
 /// This object contains basic information about a successful payment.
 ///
@@ -35,7 +35,7 @@ pub struct SuccessfulPayment {
     pub order_info: OrderInfo,
 
     /// Telegram payment identifier.
-    pub telegram_payment_charge_id: String,
+    pub telegram_payment_charge_id: TelegramPaymentChargeId,
 
     /// Provider payment identifier.
     pub provider_payment_charge_id: String,

@@ -7,7 +7,7 @@ use crate::{
     types::{
         BotCommand, BusinessConnectionId, ChatId, ChatPermissions, InlineQueryResult, InputFile,
         InputMedia, InputPollOption, InputSticker, LabeledPrice, MessageId, Recipient, Rgb,
-        StickerFormat, ThreadId, UserId,
+        StickerFormat, TelegramPaymentChargeId, ThreadId, UserId,
     },
     Bot,
 };
@@ -1463,14 +1463,11 @@ impl Requester for Bot {
 
     type RefundStarPayment = JsonRequest<payloads::RefundStarPayment>;
 
-    fn refund_star_payment<C>(
+    fn refund_star_payment(
         &self,
         user_id: UserId,
-        telegram_payment_charge_id: C,
-    ) -> Self::RefundStarPayment
-    where
-        C: Into<String>,
-    {
+        telegram_payment_charge_id: TelegramPaymentChargeId,
+    ) -> Self::RefundStarPayment {
         Self::RefundStarPayment::new(
             self.clone(),
             payloads::RefundStarPayment::new(user_id, telegram_payment_charge_id),

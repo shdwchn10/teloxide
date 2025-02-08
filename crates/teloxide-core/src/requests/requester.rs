@@ -1254,13 +1254,11 @@ pub trait Requester {
     type RefundStarPayment: Request<Payload = RefundStarPayment, Err = Self::Err>;
 
     /// For Telegram documentation see [`RefundStarPayment`].
-    fn refund_star_payment<T>(
+    fn refund_star_payment(
         &self,
         user_id: UserId,
-        telegram_payment_charge_id: T,
-    ) -> Self::RefundStarPayment
-    where
-        T: Into<String>;
+        telegram_payment_charge_id: TelegramPaymentChargeId,
+    ) -> Self::RefundStarPayment;
 
     type SetPassportDataErrors: Request<Payload = SetPassportDataErrors, Err = Self::Err>;
 

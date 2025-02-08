@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add `ExpandableBlockquote` message entity
 
 - Support for TBA 7.5
-  - Add `TransactionPartner` and `RevenueWithdrawalState` structs
+  - Add `TelegramPaymentChargeId`, `TransactionPartner` and `RevenueWithdrawalState` structs
 
 [pr1157]: https://github.com/teloxide/teloxide/pull/1157
 [pr1264]: https://github.com/teloxide/teloxide/pull/1264
