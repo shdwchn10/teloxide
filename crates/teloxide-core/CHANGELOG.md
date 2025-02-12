@@ -79,6 +79,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for TBA 7.7
   - Add `RefundedPayment` struct and relevant `Message` variant
 
+- Support for TBA 8.0
+  - Add `business_connection_id` and `subscription_period` parameters to the `createInvoiceLink` method
+
 [pr1157]: https://github.com/teloxide/teloxide/pull/1157
 [pr1264]: https://github.com/teloxide/teloxide/pull/1264
 [pr1271]: https://github.com/teloxide/teloxide/pull/1271
