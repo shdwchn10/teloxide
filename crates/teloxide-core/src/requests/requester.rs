@@ -1265,6 +1265,16 @@ pub trait Requester {
         telegram_payment_charge_id: TelegramPaymentChargeId,
     ) -> Self::RefundStarPayment;
 
+    type EditUserStarSubscription: Request<Payload = EditUserStarSubscription, Err = Self::Err>;
+
+    /// For Telegram documentation see [`EditUserStarSubscription`].
+    fn edit_user_star_subscription(
+        &self,
+        user_id: UserId,
+        telegram_payment_charge_id: TelegramPaymentChargeId,
+        is_canceled: bool,
+    ) -> Self::EditUserStarSubscription;
+
     type SetPassportDataErrors: Request<Payload = SetPassportDataErrors, Err = Self::Err>;
 
     /// For Telegram documentation see [`SetPassportDataErrors`].
@@ -1456,6 +1466,7 @@ macro_rules! forward_all {
             answer_pre_checkout_query,
             get_star_transactions,
             refund_star_payment,
+            edit_user_star_subscription,
             set_passport_data_errors,
             send_game,
             set_game_score,
