@@ -83,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add `business_connection_id` and `subscription_period` parameters to the `createInvoiceLink` method
   - Add `subscription_expiration_date`, `is_recurring` and `is_first_recurring` fields to the `SuccessfulPayment` struct
   - Add `editUserStarSubscription` TBA method
+  - Add `subscription_period` field to the `TransactionPartnerUser` struct
 
 [pr1157]: https://github.com/teloxide/teloxide/pull/1157
 [pr1264]: https://github.com/teloxide/teloxide/pull/1264
