@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::{RevenueWithdrawalState, User};
+use crate::types::{RevenueWithdrawalState, Seconds, User};
 
 /// This object describes the source of a transaction, or its recipient for
 /// outgoing transactions.
@@ -31,4 +31,7 @@ pub struct TransactionPartnerFragment {
 pub struct TransactionPartnerUser {
     /// Information about the user.
     pub user: User,
+
+    /// The duration of the paid subscription.
+    pub subscription_period: Option<Seconds>,
 }
