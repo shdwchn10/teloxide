@@ -1,12 +1,14 @@
 //! Additions to [`Bot`].
 //!
 //! [`Bot`]: crate::Bot
+use teloxide_core::{ApiError, RequestError};
+
 use crate::{prelude::*, types::*};
 
 /// Syntax sugar for [`Message`] manipulations.
 ///
 /// [`Message`]: crate::types::Message
-pub trait BotMessagesExt: Requester {
+pub trait BotMessagesExt: Requester<Err = crate::errors::RequestError> {
     /// This function is the same as [`Bot::forward_message`],
     /// but can take in [`Message`] to forward it.
     ///
@@ -108,11 +110,20 @@ pub trait BotMessagesExt: Requester {
     fn copy<C>(&self, to_chat_id: C, message: &Message) -> Self::CopyMessage
     where
         C: Into<Recipient>;
+
+    /// This function is the same as [`Bot::copy_message`],
+    /// but can take in [`Message`] to copy it.
+    ///
+    /// [`Bot::copy_messages`]: crate::Bot::copy_message
+    /// [`Message`]: crate::types::Message
+    fn is_user_deactivated<U>(&self, user_id: U) -> impl std::future::Future<Output = bool>
+    where
+        U: Into<Recipient>;
 }
 
 impl<R> BotMessagesExt for R
 where
-    R: Requester,
+    R: Requester<Err = crate::errors::RequestError>,
 {
     fn forward<C>(&self, to_chat_id: C, message: &Message) -> Self::ForwardMessage
     where
@@ -178,5 +189,14 @@ where
         C: Into<Recipient>,
     {
         self.copy_message(to_chat_id, message.chat.id, message.id)
+    }
+
+    async fn is_user_deactivated<U>(&self, user_id: U) -> bool
+    where
+        U: Into<Recipient>,
+    {
+        let res = self.send_chat_action(user_id, ChatAction::Typing).await;
+
+        matches!(res, Err(RequestError::Api(ApiError::UserDeactivated)))
     }
 }
