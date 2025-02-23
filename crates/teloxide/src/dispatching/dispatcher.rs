@@ -5,7 +5,6 @@ use crate::{
     },
     error_handlers::{ErrorHandler, LoggingErrorHandler},
     requests::{Request, Requester},
-    stop::StopToken,
     types::{Update, UpdateKind},
     update_listeners::{self, UpdateListener},
 };
@@ -45,7 +44,6 @@ pub struct DispatcherBuilder<R, Err, Key> {
     ctrlc_handler: bool,
     distribution_f: fn(&Update) -> Option<Key>,
     worker_queue_size: usize,
-    stack_size: usize,
 }
 
 impl<R, Err, Key> DispatcherBuilder<R, Err, Key>
@@ -104,14 +102,6 @@ where
     #[must_use]
     pub fn worker_queue_size(self, size: usize) -> Self {
         Self { worker_queue_size: size, ..self }
-    }
-
-    /// Specifies the stack size available to the dispatcher.
-    ///
-    /// By default, it's 8 * 1024 * 1024 bytes (8 MiB).
-    #[must_use]
-    pub fn stack_size(self, size: usize) -> Self {
-        Self { stack_size: size, ..self }
     }
 
     /// Specifies the distribution function that decides how updates are grouped
@@ -186,7 +176,6 @@ where
             ctrlc_handler,
             distribution_f: _,
             worker_queue_size,
-            stack_size,
         } = self;
 
         DispatcherBuilder {
@@ -198,7 +187,6 @@ where
             ctrlc_handler,
             distribution_f: f,
             worker_queue_size,
-            stack_size,
         }
     }
 
@@ -214,7 +202,6 @@ where
             distribution_f,
             worker_queue_size,
             ctrlc_handler,
-            stack_size,
         } = self;
 
         // If the `ctrlc_handler` feature is not enabled, don't emit a warning.
@@ -229,7 +216,6 @@ where
             state: ShutdownToken::new(),
             distribution_f,
             worker_queue_size,
-            stack_size,
             workers: HashMap::new(),
             default_worker: None,
             current_number_of_active_workers: Default::default(),
@@ -272,7 +258,6 @@ pub struct Dispatcher<R, Err, Key> {
 
     distribution_f: fn(&Update) -> Option<Key>,
     worker_queue_size: usize,
-    stack_size: usize,
     current_number_of_active_workers: Arc<AtomicU32>,
     max_number_of_active_workers: Arc<AtomicU32>,
     // Tokio TX channel parts associated with chat IDs that consume updates sequentially.
@@ -312,7 +297,6 @@ where
         Err: Debug,
     {
         const DEFAULT_WORKER_QUEUE_SIZE: usize = 64;
-        const DEFAULT_STACK_SIZE: usize = 8 * 1024 * 1024;
 
         DispatcherBuilder {
             bot,
@@ -326,7 +310,6 @@ where
             ctrlc_handler: false,
             worker_queue_size: DEFAULT_WORKER_QUEUE_SIZE,
             distribution_f: default_distribution_function,
-            stack_size: DEFAULT_STACK_SIZE,
         }
     }
 }
@@ -335,7 +318,7 @@ impl<R, Err, Key> Dispatcher<R, Err, Key>
 where
     R: Requester + Clone + Send + Sync + 'static,
     Err: Send + Sync + 'static,
-    Key: Hash + Eq + Clone + Send,
+    Key: Hash + Eq + Clone,
 {
     /// Starts your bot with the default parameters.
     ///
@@ -372,8 +355,8 @@ where
         update_listener: UListener,
         update_listener_error_handler: Arc<Eh>,
     ) where
-        UListener: UpdateListener + Send + 'a,
-        Eh: ErrorHandler<UListener::Err> + Send + Sync + 'a,
+        UListener: UpdateListener + 'a,
+        Eh: ErrorHandler<UListener::Err> + 'a,
         UListener::Err: Debug,
     {
         self.try_dispatch_with_listener(update_listener, update_listener_error_handler)
@@ -394,8 +377,8 @@ where
         update_listener_error_handler: Arc<Eh>,
     ) -> Result<(), R::Err>
     where
-        UListener: UpdateListener + Send + 'a,
-        Eh: ErrorHandler<UListener::Err> + Send + Sync + 'a,
+        UListener: UpdateListener + 'a,
+        Eh: ErrorHandler<UListener::Err> + 'a,
         UListener::Err: Debug,
     {
         // FIXME: there should be a way to check if dependency is already inserted
@@ -408,65 +391,33 @@ where
         log::debug!("hinting allowed updates: {:?}", allowed_updates);
         update_listener.hint_allowed_updates(&mut allowed_updates.into_iter());
 
-        let stop_token = Some(update_listener.stop_token());
+        let mut stop_token = Some(update_listener.stop_token());
 
-        // We create a new Tokio runtime in order to set the correct stack size. We do
-        // it a scoped thread because Tokio runtimes cannot be nested. We need a scoped
-        // thread because of the lifetime `'a` in `&'a mut self` and because scoped
-        // threads are automatically joined. See this issue:
-        // <https://github.com/teloxide/teloxide/issues/1154>.
-        std::thread::scope(|scope: &std::thread::Scope<'_, '_>| {
-            scope.spawn(move || {
-                let runtime = tokio::runtime::Builder::new_multi_thread()
-                    .thread_stack_size(self.stack_size)
-                    .thread_name("teloxide-dispatcher-worker")
-                    .enable_all()
-                    .build()
-                    .unwrap();
-
-                runtime.block_on(self.start_listening(
-                    update_listener,
-                    update_listener_error_handler,
-                    stop_token,
-                ));
-            });
-        });
-        Ok(())
-    }
-
-    async fn start_listening<'a, UListener, Eh>(
-        &'a mut self,
-        mut update_listener: UListener,
-        update_listener_error_handler: Arc<Eh>,
-        mut stop_token: Option<StopToken>,
-    ) where
-        UListener: UpdateListener + 'a,
-        Eh: ErrorHandler<UListener::Err> + 'a,
-        UListener::Err: Debug,
-    {
         self.state.start_dispatching();
 
-        let stream = update_listener.as_stream();
-        tokio::pin!(stream);
+        {
+            let stream = update_listener.as_stream();
+            tokio::pin!(stream);
 
-        loop {
-            self.remove_inactive_workers_if_needed().await;
+            loop {
+                self.remove_inactive_workers_if_needed().await;
 
-            let res = future::select(stream.next(), pin!(self.state.wait_for_changes()))
-                .map(either)
-                .await
-                .map_either(|l| l.0, |r| r.0);
+                let res = future::select(stream.next(), pin!(self.state.wait_for_changes()))
+                    .map(either)
+                    .await
+                    .map_either(|l| l.0, |r| r.0);
 
-            match res {
-                Either::Left(upd) => match upd {
-                    Some(upd) => self.process_update(upd, &update_listener_error_handler).await,
-                    None => break,
-                },
-                Either::Right(()) => {
-                    if self.state.is_shutting_down() {
-                        if let Some(token) = stop_token.take() {
-                            log::debug!("Start shutting down dispatching...");
-                            token.stop();
+                match res {
+                    Either::Left(upd) => match upd {
+                        Some(upd) => self.process_update(upd, &update_listener_error_handler).await,
+                        None => break,
+                    },
+                    Either::Right(()) => {
+                        if self.state.is_shutting_down() {
+                            if let Some(token) = stop_token.take() {
+                                log::debug!("Start shutting down dispatching...");
+                                token.stop();
+                            }
                         }
                     }
                 }
@@ -484,6 +435,7 @@ where
             .await;
 
         self.state.done();
+        Ok(())
     }
 
     async fn process_update<LErr, LErrHandler>(

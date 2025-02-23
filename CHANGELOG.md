@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `bot.forward`, `bot.edit_live_location`, `bot.stop_live_location`, `bot.set_reaction`, `bot.pin`, `bot.unpin`, `bot.edit_text`, `bot.edit_caption`, `bot.edit_media`, `bot.edit_reply_markup`, `bot.stop_poll_message`, `bot.delete` and `bot.copy` methods to the new `crate::sugar::bot::BotMessagesExt` trait
   - `req.reply_to` method to the new `crate::sugar::request::RequestReplyExt` trait
   - `req.disable_link_preview` method to the new `crate::sugar::request::RequestLinkPreviewExt` trait
-- `stack_size` setter to `DispatcherBuilder` ([PR 1185](https://github.com/teloxide/teloxide/pull/1185))
 - `utils::render` module to render HTML/Markdown-formatted output ([PR 1152](https://github.com/teloxide/teloxide/pull/1152))
 - `Bot::from_env` now can read and use `TELOXIDE_API_URL` environmental variable ([PR 1197](https://github.com/teloxide/teloxide/pull/1197))
 - Improved developer experience: ([PR 1255](https://github.com/teloxide/teloxide/pull/1255))
@@ -33,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - MSRV (Minimal Supported Rust Version) was bumped from `1.70.0` to `1.80.0`
   - Some dependencies was bumped: `axum` to `0.8.0`, `sqlx` to `0.8.1`, `tower` to `0.5.0`, `reqwest` to `0.12.7`, `tower-http` to `0.6.2`, `derive_more` to `1.0.0`, `serde_with` to `3.12.0`, `aquamarine` to `0.6.0`, `deadpool-redis` to `0.20.0`, `thiserror` to `2.0.11`, `syn` to `2.0.96`, `bitflags` to `2`
   - `tokio` version was explicitly specified as `1.39`
-- Added new `Send` and `Sync` trait bounds to the `UListener` and `Eh` generic parameters of `try_dispatch_with_listener` and `dispatch_with_listener` ([PR 1185](https://github.com/teloxide/teloxide/pull/1185)) [**BC**]
 - Renamed `Limits::messages_per_min_channel` to `messages_per_min_channel_or_supergroup` to reflect its actual behavior ([PR 1214](https://github.com/teloxide/teloxide/pull/1214))
 - Added derive `Clone`, `Debug`, `PartialEq`, `Eq`, `Hash` to `ChatPermissions` ([PR 1242](https://github.com/teloxide/teloxide/pull/1242))
 - Added derive `Clone`, `Debug` to `Settings` ([PR 1242](https://github.com/teloxide/teloxide/pull/1242))
@@ -45,7 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Now Vec<MessageId> in requests serializes into [number] instead of [ {message_id: number} ], `forward_messages`, `copy_messages` and `delete_messages` now work properly
 - Now `InlineQueryResultsButton` serializes properly ([issue 1181](https://github.com/teloxide/teloxide/issues/1181))
 - Now `ThreadId` is able to serialize in multipart requests ([PR 1179](https://github.com/teloxide/teloxide/pull/1179))
-- Now stack does not overflow on dispatch ([issue 1154](https://github.com/teloxide/teloxide/issues/1154))
 - Implement `RequestReplyExt` and `RequestLinkPreviewExt` on setters from `teloxide_core::payloads` so syntax sugar can work on bot adaptors too ([PR 1270](https://github.com/teloxide/teloxide/pull/1270))
 - Now blockquote handling in the render module works correctly ([PR 1267](https://github.com/teloxide/teloxide/pull/1267))
 - Now blockquote generation in the `utils::markdown` module works correctly ([PR 1273](https://github.com/teloxide/teloxide/pull/1273))
